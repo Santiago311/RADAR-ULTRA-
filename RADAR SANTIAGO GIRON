@@ -1,0 +1,48 @@
+#include <Servo.h>
+
+Servo servo;
+int a = 0;
+int dir = 5;
+int echoPin = 12;
+int trigPin = 13;
+
+void setup() {
+  Serial.begin(9600);
+  servo.attach(9);
+  servo.write(0);
+}
+
+void loop() {
+  long duration, distance;
+  
+  // Triggering ultrasonic sensor
+  pinMode(trigPin, OUTPUT);
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Receiving ultrasonic sensor signal
+  pinMode(echoPin, INPUT);
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calculating distance
+  distance = duration * 0.034 / 2;
+  
+  // Sending distance to serial
+  Serial.print(distance);
+  Serial.print(",");
+  Serial.println(a);
+  
+  // Moving servo
+  a += dir;
+  servo.write(a);
+
+  // Changing servo direction
+  if (a == 0) dir = 5;
+  if (a == 180) dir = -5;
+  
+  // Delay
+  delay(100);
+}
